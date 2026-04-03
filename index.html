@@ -1,0 +1,2030 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测测你的鸟类MBTI</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 480px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #66BB6A 0%, #43A047 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 25px;
+        }
+        
+        /* 欢迎页 */
+        .welcome-page {
+            text-align: center;
+        }
+        
+        .welcome-page .bird-icon {
+            font-size: 70px;
+            margin-bottom: 15px;
+        }
+        
+        .welcome-page h2 {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        
+        .welcome-page p {
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        
+        .feature-list {
+            text-align: left;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 25px;
+        }
+        
+        .feature-list li {
+            color: #555;
+            margin-bottom: 8px;
+            padding-left: 18px;
+            position: relative;
+            font-size: 13px;
+        }
+        
+        .feature-list li:before {
+            content: "🐦";
+            position: absolute;
+            left: 0;
+        }
+        
+        /* 答题页 */
+        .quiz-page {
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #66BB6A 0%, #43A047 100%);
+            transition: width 0.3s ease;
+        }
+        
+        .question-number {
+            color: #2E7D32;
+            font-weight: bold;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .dimension-tag {
+            display: inline-block;
+            background: #FFB300;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            margin-bottom: 12px;
+        }
+        
+        .bonus-tag {
+            background: #ff9a9e;
+        }
+        
+        .question-text {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option-btn {
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+        }
+        
+        .option-btn:hover {
+            border-color: #66BB6A;
+            background: #E8F5E9;
+        }
+
+        .option-btn.selected {
+            border-color: #66BB6A;
+            background: #66BB6A;
+            color: white;
+        }
+        
+        .option-btn .option-label {
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        /* 结果页 */
+        .result-page {
+            display: none;
+        }
+        
+        .loading-page {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .loading-bird {
+            font-size: 50px;
+            margin-bottom: 15px;
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        .loading-text {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .result-content {
+            display: none;
+        }
+        
+        .result-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .bird-avatar {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+        
+        .bird-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .result-mbti {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+        
+        .result-bird-name {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .bird-traits {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .trait-tag {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #333;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .result-description {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .result-description h4 {
+            font-size: 15px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .result-description p {
+            color: #555;
+            line-height: 1.7;
+            font-size: 13px;
+        }
+        
+        .bird-illustration {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            margin-top: -10px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .bird-illustration-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .bird-illustration img {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .dimensions-chart {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        
+        .chart-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .dimension-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .dimension-label {
+            width: 30px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .dimension-bar-container {
+            flex: 1;
+            height: 14px;
+            background: #e0e0e0;
+            border-radius: 7px;
+            overflow: hidden;
+            position: relative;
+            margin: 0 8px;
+        }
+        
+        .dimension-bar-left {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        .dimension-value {
+            width: 60px;
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #66BB6A 0%, #43A047 100%);
+            color: white;
+            box-shadow: 0 3px 10px rgba(102, 187, 106, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 187, 106, 0.5);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #43A047;
+            border: 2px solid #43A047;
+        }
+        
+        .btn-secondary:hover {
+            background: #f8f9ff;
+        }
+        
+        /* 配色方案 */
+        .color-purple {
+            --main-color: #9b59b6;
+            --light-color: #e8d5f0;
+        }
+        
+        .color-green {
+            --main-color: #27ae60;
+            --light-color: #d5f5e3;
+        }
+        
+        .color-blue {
+            --main-color: #3498db;
+            --light-color: #d6eaf8;
+        }
+        
+        .color-yellow {
+            --main-color: #f39c12;
+            --light-color: #fdebd0;
+        }
+        
+        /* 返回按钮样式 */
+        .btn-back {
+            padding: 10px 20px;
+            background: white;
+            color: #43A047;
+            border: 2px solid #43A047;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            background: #E8F5E9;
+            transform: translateX(-2px);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 25px 20px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .question-text {
+                font-size: 15px;
+            }
+            
+            .result-mbti {
+                font-size: 32px;
+            }
+            
+            .bird-avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 50px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* 分享弹窗样式 */
+        .share-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .share-modal.active {
+            display: flex;
+        }
+
+        .share-modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 480px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .share-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .share-modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #666;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .share-modal-body {
+            padding: 20px;
+        }
+
+        .share-preview {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* 分享长图样式 */
+        .share-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .share-card-header {
+            background: linear-gradient(135deg, #66BB6A 0%, #43A047 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .share-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .share-subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .share-card-body {
+            padding: 25px 20px;
+        }
+
+        .share-bird-avatar {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #66BB6A;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+
+        .share-bird-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .share-mbti {
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 5px;
+            color: #43A047;
+        }
+
+        .share-bird-name {
+            font-size: 18px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .share-traits {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .share-trait-tag {
+            background: #d5f5e3;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #333;
+            border: 1px solid #43A047;
+        }
+
+        .share-description {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .share-description h4 {
+            font-size: 15px;
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .share-description p {
+            margin: 0;
+            color: #555;
+            line-height: 1.7;
+            font-size: 13px;
+        }
+
+        .share-illustration {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .share-illustration-title {
+            font-size: 14px;
+            margin: 0 0 10px 0;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .share-illustration img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .share-dimensions {
+            margin-bottom: 0;
+        }
+
+        .share-dimension-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .share-dimension-label {
+            width: 30px;
+            font-weight: bold;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .share-dimension-bar {
+            flex: 1;
+            height: 14px;
+            background: #e0e0e0;
+            border-radius: 7px;
+            overflow: hidden;
+            margin: 0 8px;
+        }
+
+        .share-dimension-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #66BB6A 0%, #43A047 100%);
+            transition: width 0.5s ease;
+        }
+
+        .share-dimension-value {
+            width: 60px;
+            font-size: 11px;
+            color: #666;
+            text-align: center;
+        }
+
+        .share-card-footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .share-footer-text {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .share-creator {
+            font-size: 10px;
+            color: #999;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+
+
+        .share-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .share-actions .btn {
+            flex: 1;
+            max-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>测测你的鸟类MBTI</h1>
+            <p>25道精准题目，属于你的专属鸟类画像</p>
+        </div>
+        
+        <div class="content">
+            <!-- 欢迎页 -->
+            <div class="welcome-page" id="welcomePage">
+                <div class="bird-icon">🦅</div>
+                <h2>发现你的鸟类人格</h2>
+                <p>通过25道精心设计的心理测试问题，结合5道鸟系专属权重题，精准锁定你的MBTI类型，并匹配对应的鸟类画像。</p>
+                
+                <ul class="feature-list">
+                    <li>20道核心维度题，精准分析性格特质</li>
+                    <li>5道鸟系权重题，强化结果准确性</li>
+                    <li>专属鸟类画像，生动有趣</li>
+                    <li>3-5分钟完成，专业心理测试逻辑</li>
+                </ul>
+                
+                <button class="btn btn-primary" onclick="startQuiz()">开始测试</button>
+            </div>
+            
+            <!-- 答题页 -->
+            <div class="quiz-page" id="quizPage">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div class="question-number" id="questionNumber">问题 1/25</div>
+                <div class="dimension-tag" id="dimensionTag">社交能量 E/I</div>
+                <div class="question-text" id="questionText"></div>
+
+                <div class="options-container" id="optionsContainer">
+                    <!-- 选项会动态生成 -->
+                </div>
+
+                <button class="btn-back" id="backBtn" onclick="goBack()" style="display: none;">← 返回上一题</button>
+            </div>
+            
+            <!-- 加载页 -->
+            <div class="loading-page" id="loadingPage">
+                <div class="loading-bird">🐦</div>
+                <div class="loading-text" id="loadingText">正在分析你的答题数据...</div>
+            </div>
+            
+            <!-- 结果页 -->
+            <div class="result-page" id="resultPage">
+                <div class="result-content" id="resultContent">
+                    <div class="result-header">
+                        <div class="bird-avatar" id="birdAvatar"></div>
+                        <div class="result-mbti" id="resultMBTI"></div>
+                        <div class="result-bird-name" id="resultBirdName"></div>
+                    </div>
+                    
+                    <div class="bird-traits" id="birdTraits">
+                        <!-- 特征标签动态生成 -->
+                    </div>
+                    
+                    <div class="result-description">
+                        <h4>鸟格描述</h4>
+                        <p id="resultDescription"></p>
+                    </div>
+                    
+                    <div class="dimensions-chart">
+                        <div class="chart-title">性格维度分析</div>
+                        <div class="dimension-row">
+                            <div class="dimension-label">E/I</div>
+                            <div class="dimension-bar-container">
+                                <div class="dimension-bar-left" id="eibar"></div>
+                            </div>
+                            <div class="dimension-value" id="eivalue"></div>
+                        </div>
+                        <div class="dimension-row">
+                            <div class="dimension-label">S/N</div>
+                            <div class="dimension-bar-container">
+                                <div class="dimension-bar-left" id="snbar"></div>
+                            </div>
+                            <div class="dimension-value" id="snvalue"></div>
+                        </div>
+                        <div class="dimension-row">
+                            <div class="dimension-label">T/F</div>
+                            <div class="dimension-bar-container">
+                                <div class="dimension-bar-left" id="tfbar"></div>
+                            </div>
+                            <div class="dimension-value" id="tfvalue"></div>
+                        </div>
+                        <div class="dimension-row">
+                            <div class="dimension-label">J/P</div>
+                            <div class="dimension-bar-container">
+                                <div class="dimension-bar-left" id="jpbar"></div>
+                            </div>
+                            <div class="dimension-value" id="jpvalue"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="bird-illustration" id="birdIllustration" style="display: none;">
+                        <div class="bird-illustration-title">你的MBTI插画</div>
+                        <!-- 低多边形插图动态生成 -->
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" onclick="restartQuiz()">重新测试</button>
+                        <button class="btn btn-primary" onclick="showShareModal()">分享结果</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分享弹窗 -->
+    <div class="share-modal" id="shareModal">
+        <div class="share-modal-content">
+            <div class="share-modal-header">
+                <h3>分享你的鸟类人格</h3>
+                <button class="close-btn" onclick="closeShareModal()">×</button>
+            </div>
+            <div class="share-modal-body">
+                <div class="share-preview" id="sharePreview">
+                    <!-- 分享长图预览区域 -->
+                    <div class="share-card" id="shareCard">
+                        <div class="share-card-header">
+                            <div class="share-title">测测你的鸟类MBTI</div>
+                            <div class="share-subtitle">25道精准题目，属于你的专属鸟类画像</div>
+                        </div>
+                        <div class="share-card-body">
+                            <div class="share-bird-avatar" id="shareBirdAvatar"></div>
+                            <div class="share-mbti" id="shareMBTI"></div>
+                            <div class="share-bird-name" id="shareBirdName"></div>
+                            <div class="share-traits" id="shareTraits"></div>
+                            <div class="share-description">
+                                <h4>鸟格描述</h4>
+                                <p id="shareDescription"></p>
+                            </div>
+                            <div class="share-dimensions" id="shareDimensions">
+                                <div class="share-dimension-row">
+                                    <span class="share-dimension-label">E/I</span>
+                                    <div class="share-dimension-bar">
+                                        <div class="share-dimension-fill" id="shareEiFill"></div>
+                                    </div>
+                                    <span class="share-dimension-value" id="shareEiValue"></span>
+                                </div>
+                                <div class="share-dimension-row">
+                                    <span class="share-dimension-label">S/N</span>
+                                    <div class="share-dimension-bar">
+                                        <div class="share-dimension-fill" id="shareSnFill"></div>
+                                    </div>
+                                    <span class="share-dimension-value" id="shareSnValue"></span>
+                                </div>
+                                <div class="share-dimension-row">
+                                    <span class="share-dimension-label">T/F</span>
+                                    <div class="share-dimension-bar">
+                                        <div class="share-dimension-fill" id="shareTfFill"></div>
+                                    </div>
+                                    <span class="share-dimension-value" id="shareTfValue"></span>
+                                </div>
+                                <div class="share-dimension-row">
+                                    <span class="share-dimension-label">J/P</span>
+                                    <div class="share-dimension-bar">
+                                        <div class="share-dimension-fill" id="shareJpFill"></div>
+                                    </div>
+                                    <span class="share-dimension-value" id="shareJpValue"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="share-card-footer">
+                            <div class="share-footer-text">测测你的鸟类MBTI</div>
+                            <div class="share-creator">创作者：鱼机智yjy</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="share-actions">
+                    <button class="btn btn-primary" onclick="generateShareImage()">生成长图</button>
+                    <button class="btn btn-secondary" onclick="shareResult()">复制文案</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 测试题目数据（25题）
+        const questions = [
+            // 维度1：社交能量 E/I（5题）
+            {
+                id: 1,
+                dimension: 'EI',
+                dimensionName: '社交能量 E/I',
+                text: '公司/学校组织团建，你更倾向？',
+                options: [
+                    { label: 'A', text: '积极参与所有游戏，和大家打成一片', value: 'E' },
+                    { label: 'B', text: '找个安静角落待着，偶尔配合互动', value: 'I' }
+                ]
+            },
+            {
+                id: 2,
+                dimension: 'EI',
+                dimensionName: '社交能量 E/I',
+                text: '如果一整天都自己待着，你会？',
+                options: [
+                    { label: 'A', text: '感到孤单，想出门找人', value: 'E' },
+                    { label: 'B', text: '觉得放松舒适，很满足', value: 'I' }
+                ]
+            },
+            {
+                id: 3,
+                dimension: 'EI',
+                dimensionName: '社交能量 E/I',
+                text: '聚会结束后，你的能量状态是？',
+                options: [
+                    { label: 'A', text: '越玩越嗨，还想续场', value: 'E' },
+                    { label: 'B', text: '电量耗尽，只想回家独处', value: 'I' }
+                ]
+            },
+            {
+                id: 4,
+                dimension: 'EI',
+                dimensionName: '社交能量 E/I',
+                text: '在陌生场合，你通常？',
+                options: [
+                    { label: 'A', text: '主动开口，快速融入', value: 'E' },
+                    { label: 'B', text: '被动等待别人来找自己', value: 'I' }
+                ]
+            },
+            {
+                id: 5,
+                dimension: 'EI',
+                dimensionName: '社交能量 E/I',
+                text: '心情不好时更倾向？',
+                options: [
+                    { label: 'A', text: '找人倾诉，说出来就好', value: 'E' },
+                    { label: 'B', text: '自己消化，不想打扰别人', value: 'I' }
+                ]
+            },
+            // 维度2：认知模式 S/N（5题）
+            {
+                id: 6,
+                dimension: 'SN',
+                dimensionName: '认知模式 S/N',
+                text: '计划旅行时，你更关注？',
+                options: [
+                    { label: 'A', text: '交通、住宿、攻略细节，确保顺利', value: 'S' },
+                    { label: 'B', text: '目的地的氛围、奇遇可能，主打随缘', value: 'N' }
+                ]
+            },
+            {
+                id: 7,
+                dimension: 'SN',
+                dimensionName: '认知模式 S/N',
+                text: '看到一款新APP，你会先？',
+                options: [
+                    { label: 'A', text: '研究功能按钮，慢慢摸索用法', value: 'S' },
+                    { label: 'B', text: '直接上手试玩，靠直觉探索乐趣', value: 'N' }
+                ]
+            },
+            {
+                id: 8,
+                dimension: 'SN',
+                dimensionName: '认知模式 S/N',
+                text: '别人说话时，你更在意？',
+                options: [
+                    { label: 'A', text: '具体事实和细节', value: 'S' },
+                    { label: 'B', text: '背后的潜台词和感觉', value: 'N' }
+                ]
+            },
+            {
+                id: 9,
+                dimension: 'SN',
+                dimensionName: '认知模式 S/N',
+                text: '学习新技能时你更喜欢？',
+                options: [
+                    { label: 'A', text: '按步骤、讲方法，稳扎稳打', value: 'S' },
+                    { label: 'B', text: '凭感觉、脑洞试错，自由探索', value: 'N' }
+                ]
+            },
+            {
+                id: 10,
+                dimension: 'SN',
+                dimensionName: '认知模式 S/N',
+                text: '看待一件事，你更习惯？',
+                options: [
+                    { label: 'A', text: '关注现实、看得见的部分', value: 'S' },
+                    { label: 'B', text: '联想未来、可能性与意义', value: 'N' }
+                ]
+            },
+            // 维度3：处事风格 T/F（5题）
+            {
+                id: 11,
+                dimension: 'TF',
+                dimensionName: '处事风格 T/F',
+                text: '团队合作中有人拖后腿，你会？',
+                options: [
+                    { label: 'A', text: '直接沟通问题，提出改进建议', value: 'T' },
+                    { label: 'B', text: '先体谅对方难处，私下委婉提醒', value: 'F' }
+                ]
+            },
+            {
+                id: 12,
+                dimension: 'TF',
+                dimensionName: '处事风格 T/F',
+                text: '选礼物时，你更看重？',
+                options: [
+                    { label: 'A', text: '实用性、性价比，对方真的能用得上', value: 'T' },
+                    { label: 'B', text: '心意和仪式感，能不能打动对方', value: 'F' }
+                ]
+            },
+            {
+                id: 13,
+                dimension: 'TF',
+                dimensionName: '处事风格 T/F',
+                text: '被误解时，你优先？',
+                options: [
+                    { label: 'A', text: '冷静讲道理，把逻辑说清', value: 'T' },
+                    { label: 'B', text: '在意情绪伤害，更在乎关系', value: 'F' }
+                ]
+            },
+            {
+                id: 14,
+                dimension: 'TF',
+                dimensionName: '处事风格 T/F',
+                text: '做重要选择时，你更依靠？',
+                options: [
+                    { label: 'A', text: '利弊分析与客观事实', value: 'T' },
+                    { label: 'B', text: '内心感受与价值观', value: 'F' }
+                ]
+            },
+            {
+                id: 15,
+                dimension: 'TF',
+                dimensionName: '处事风格 T/F',
+                text: '看到别人难过，你第一反应是？',
+                options: [
+                    { label: 'A', text: '想帮他解决问题', value: 'T' },
+                    { label: 'B', text: '先共情陪伴，给予安慰', value: 'F' }
+                ]
+            },
+            // 维度4：生活态度 J/P（5题）
+            {
+                id: 16,
+                dimension: 'JP',
+                dimensionName: '生活态度 J/P',
+                text: '周末作息你更接近？',
+                options: [
+                    { label: 'A', text: '固定时间起床，安排好学习/娱乐计划', value: 'J' },
+                    { label: 'B', text: '自然醒，根据心情临时决定做什么', value: 'P' }
+                ]
+            },
+            {
+                id: 17,
+                dimension: 'JP',
+                dimensionName: '生活态度 J/P',
+                text: '手机相册/文件夹，你会？',
+                options: [
+                    { label: 'A', text: '分类整理得井井有条，方便查找', value: 'J' },
+                    { label: 'B', text: '随手存放，找的时候随缘翻', value: 'P' }
+                ]
+            },
+            {
+                id: 18,
+                dimension: 'JP',
+                dimensionName: '生活态度 J/P',
+                text: '临时被改计划，你的感受是？',
+                options: [
+                    { label: 'A', text: '有点烦躁，更喜欢按原定安排', value: 'J' },
+                    { label: 'B', text: '无所谓，随机变化更有趣', value: 'P' }
+                ]
+            },
+            {
+                id: 19,
+                dimension: 'JP',
+                dimensionName: '生活态度 J/P',
+                text: '面对任务截止日，你是？',
+                options: [
+                    { label: 'A', text: '提前完成，不慌不忙', value: 'J' },
+                    { label: 'B', text: '临近截止才爆发效率', value: 'P' }
+                ]
+            },
+            {
+                id: 20,
+                dimension: 'JP',
+                dimensionName: '生活态度 J/P',
+                text: '对生活状态的偏好是？',
+                options: [
+                    { label: 'A', text: '有规划、有秩序，心里踏实', value: 'J' },
+                    { label: 'B', text: '随性自由，不被日程束缚', value: 'P' }
+                ]
+            },
+            // 鸟人附加权重题（5题）
+            {
+                id: 21,
+                dimension: 'BONUS',
+                dimensionName: '鸟系权重题',
+                text: '如果变成一只鸟，你更偏好？',
+                options: [
+                    { label: 'A', text: '占据领地、有明确目标、冷静观察', value: 'A' },
+                    { label: 'B', text: '温柔合群、喜欢陪伴、在意氛围', value: 'B' }
+                ]
+            },
+            {
+                id: 22,
+                dimension: 'BONUS',
+                dimensionName: '鸟系权重题',
+                text: '你觉得鸟类最酷的能力是？',
+                options: [
+                    { label: 'A', text: '筑巢规划、逻辑清晰、执行力强', value: 'A' },
+                    { label: 'B', text: '自由随性、随心飞翔、享受当下', value: 'B' }
+                ]
+            },
+            {
+                id: 23,
+                dimension: 'BONUS',
+                dimensionName: '鸟系权重题',
+                text: '遇到突发状况，你的本能是？',
+                options: [
+                    { label: 'A', text: '快速判断、理性应对', value: 'A' },
+                    { label: 'B', text: '先顾及情绪与安全', value: 'B' }
+                ]
+            },
+            {
+                id: 24,
+                dimension: 'BONUS',
+                dimensionName: '鸟系权重题',
+                text: '你更喜欢的鸟生节奏？',
+                options: [
+                    { label: 'A', text: '规律作息、有固定领地', value: 'A' },
+                    { label: 'B', text: '四处游走、不被束缚', value: 'B' }
+                ]
+            },
+            {
+                id: 25,
+                dimension: 'BONUS',
+                dimensionName: '鸟系权重题',
+                text: '你更被哪种鸟吸引？',
+                options: [
+                    { label: 'A', text: '聪慧机敏，行事沉稳，自带气场', value: 'A' },
+                    { label: 'B', text: '温和恬静，细腻治愈，软萌可爱', value: 'B' }
+                ]
+            }
+        ];
+
+        // 16种MBTI类型对应的鸟类人格（根据映射关系文档）
+        const birdPersonalities = {
+            'INTJ': {
+                bird: '喜鹊',
+                title: '建筑师',
+                traits: ['筑巢精密', '规划极强', '腹黑记仇', '高冷大佬'],
+                description: '筑巢极其讲究结构、选址、材料，精密得像工程鸟\n 做事有长远计划，领地布局、警戒路线都很清晰\n 高冷、独立、但是又会同伴间合作，智商在线，自我要求高\n 记仇、隐忍、目的性极强，不打无准备的架',
+                color: 'purple',
+                emoji: '🐦‍⬛',
+                image: 'images/喜鹊.png',
+                illustration: 'images/INTJ.png'
+            },
+            'ENFJ': {
+                bird: '乌鸫',
+                title: '演说家',
+                traits: ['凌晨开嗓', '模仿百鸟', '屎弹攻击', '情绪王者'],
+                description: '你是E人主唱+嘴强王者：\n 凌晨开嗓、模仿百鸟，自带演讲欲和表演欲\n 嗓门大、情绪外放，爱"骂人"、爱宣示存在感\n 社会性强，会抱团、打群架，护巢时特别激进\n 看似黑不溜秋不起眼，一开嗓就是全场焦点',
+                color: 'green',
+                emoji: '🐦‍⬛',
+                image: 'images/乌鸫.png',
+                illustration: 'images/ENFJ.png'
+            },
+            'INFP': {
+                bird: '白鹭',
+                title: '调停者',
+                traits: ['姿态优雅', '气质清冷', '与世无争', '一击即中'],
+                description: '姿态优雅，气质清冷，常在水边静静伫立\n 动作慢、动作轻，不慌不忙，与世无争\n 喜欢开阔干净的环境，远离喧嚣\n 捕食时专注又温柔，一击即中但不凶狠',
+                color: 'green',
+                emoji: '🦢',
+                image: 'images/白鹭.png',
+                illustration: 'images/INFP.png'
+            },
+            'ESFP': {
+                bird: '麻雀',
+                title: '街头社牛',
+                traits: ['扎堆吵闹', '爱凑热闹', '活在当下', '生存力拉满'],
+                description: '街头社牛、群居话痨、务实生存，麻雀是最接地气的ESFP表演者，天生群居属性拉满，走到哪里都是一群扎堆，叽叽喳喳停不下来。极度适应城市生活，不怕人、爱互动，主打一个活在当下，有食物就满足，生存力超强，是小区里最热闹的社交达人。',
+                color: 'yellow',
+                emoji: '🐦',
+                image: 'images/麻雀.png',
+                illustration: 'images/ESFP.png'
+            },
+            'ENTP': {
+                bird: '白头鹎',
+                title: '辩论家',
+                traits: ['嗓门大', '有方言', '吵个不停', 'battle到底', '又怂又爱玩'],
+                description: '你是又怂又爱玩，又谨慎又叛逆的battle鹎：\n 嘴就没停过，调子还多，一天换八百种叫法，纯纯话痨+即兴rapper。\n 很有个性、谁都不服\n 脾气臭、爱欺负小麻雀，嘴毒、手欠，典型没事找事型辩手\n 极度谨慎、怕人，但又胆大包天，人一来立刻躲，精得很\n但一转头就敢偷你家门口腊肉',
+                color: 'purple',
+                emoji: '🐦',
+                image: 'images/白头鹎.png',
+                illustration: 'images/ENTP.png'
+            },
+            'ISTJ': {
+                bird: '夜鹭',
+                title: '低调老师傅',
+                traits: ['昼伏夜出', '喜爱发呆', '极少鸣叫', '捕鱼专注', '邻里不社交', '安静装企鹅'],
+                description: '你就是传说中的夜师傅！\n 昼伏夜出，白天在树上缩成一团一动不动，佝偻着像个沉思的老头，长相混搭，状似企鹅\n 极度安静，不爱社交，几乎不叫，偶尔才"呱"一声\n 抓鱼时专注力拉满，耐心极强，一击必中的实力派\n 窝挨得很近，邻里距离近但零交流，不吵架不抱团\n 生活作息规律、行为模式固定，不惹事、不凑热闹，低调生存。',
+                color: 'blue',
+                emoji: '🦅',
+                image: 'images/夜鹭.png',
+                illustration: 'images/ISTJ.png'
+            },
+            'ISFJ': {
+                bird: '白鹡鸰',
+                title: '守护者',
+                traits: ['口水巾萌萌哒', '尾巴颠颠', '细心抓虫', '温和友善'],
+                description: '你总是安安静静待在人类附近，不吵不闹，低调又温和\n走路尾巴一颠一颠，动作稳重乖巧，看着就很治愈\n你的性格踏实不惹事，不抢食、不斗殴，脾气超好\n细心又顾家，对自己的小领地和同伴都很上心\n你勤快又务实，默默觅食、认真生活，存在感不强却很可靠\n叫声轻柔不刺耳，像在轻声提醒，温柔又有分寸',
+                color: 'blue',
+                emoji: '🐦',
+                image: 'images/白鹡鸰.png',
+                illustration: 'images/ISFJ.png'
+            },
+            'INTP': {
+                bird: '领角鸮',
+                title: '思考家',
+                traits: ['树上哲学家', '发呆学者', '独居思考者', '作息阴间'],
+                description: '你是社恐学者领角鸮，俗称猫头鹰\n 白天基本都在树上缩成一团发呆，看起来迷迷糊糊，与世无争\n 眼神看似放空，其实脑子里一直在疯狂运算、观察、思考\n 捕猎不靠莽，靠逻辑、预判、悄无声息的精准\n 话极少，叫声简单又克制，不吵不闹，情绪稳定到像没有情绪\n 作息阴间，喜欢夜间活动，活在自己的精神世界里\n 看着慵懒散漫，实则观察力极强，心里门儿清，只是懒得表现',
+                color: 'purple',
+                emoji: '🦉',
+                illustration: 'images/领角鸮.png',
+                image: 'images/INTP.png'
+            },
+            'ENTJ': {
+                bird: '红嘴蓝鹊',
+                title: '指挥官',
+                traits: ['颜值超高', '羽毛华丽', '行事张扬且凶残', '嗓门尖锐', '战斗力爆表', '鸟界霸总'],
+                description: '你是颜值高、羽毛华丽的红嘴蓝鹊，出场自带主角光环，行事张扬高调\n 领地意识极强，战斗力爆表，敢打敢刚，连猫都敢驱赶\n 团队行动有组织有纪律，打架配合默契，执行力拉满\n 聪明又残忍，连幼鸟都杀\n 嗓门大、叫声尖锐有穿透力，天生的领导者气场\n 目标明确、行动力凶猛，想要的东西绝不手软',
+                color: 'purple',
+                emoji: '🐦‍⬛',
+                image: 'images/红嘴蓝鹊.png',
+                illustration: 'images/ENTJ.png'
+            },
+            'INFJ': {
+                bird: '苍鹭',
+                title: '守望者',
+                traits: ['恒立水中', '纹丝不动', '悲悯隐士', '优雅至极', '你想活出怎样的人生'],
+                description: '你是鸟界的精神导师苍鹭，是悲悯隐士、理想主义观察者\n 永远独来独往，站在水中央，自带疏离又温柔的气场\n 看似安静冷漠，实则内心细腻、共情力极强，对环境变化极度敏感\n 不参与争斗，不凑热闹，有自己坚定的原则和精神世界\n 极有耐心，为了目标可以长久等待，温柔但有极强定力\n 身姿优雅又庄严，像在沉思生命意义，自带"哲人+圣人"感\n 不爱喧哗，只在必要时发声，低调却有不容忽视的存在感\n 既有悲悯之心，又有清醒的洞察力，是鸟里真正的精神领袖',
+                color: 'green',
+                emoji: '🦢',
+                image: 'images/苍鹭.png',
+                illustration: 'images/INFJ.png'
+            },
+            'ESTJ': {
+                bird: '松鸦',
+                title: '实干家',
+                traits: ['机警敏锐', '沉稳靠谱', '条理清晰', '执行力强', '威严气场'],
+                description: '你是鸟界智商在线的松鸦，清醒务实、条理清晰，自带超强秩序感！\n 机警敏锐又沉稳靠谱，是族群里最可靠的安全屏障，守护领地从不含糊。\n 行事果决讲章法，执行力拉满不拖沓，讨厌无意义的内耗与敷衍。\n 看似低调不张扬，却自带威严气场，总能用清晰逻辑掌控全局。\n 重责任、守规则，既是守护集体的硬核担当，也是说一不二的铁面掌舵人。',
+                color: 'blue',
+                emoji: '🐦‍⬛',
+                image: 'images/松鸦.png',
+                illustration: 'images/ESTJ.png'
+            },
+            'ISTP': {
+                bird: '翠鸟',
+                title: '技术专家',
+                traits: ['身手极快', '捕猎干脆', '冷静观察', '实用主义', '技术流'],
+                description: '你是气质高贵、技术为先的翠鸟，你安静、冷酷、独狼，不抱团不凑热闹。\n 身手极快，捕猎干脆利落，一击就走技术流、实力派，不搞虚的，实用主义拉满。\n 看着小巧冷静，实则狠辣果断冷静观察→瞬间出手→完事撤退，全程不带情绪。\n 擅长利用环境、隐蔽自己机警、低调、懂生存，不张扬但不好惹。\n 外形酷、配色冷艳，气质偏冷硬没有仙气，没有攻击性叫嚣，就是冷静的技术型杀手。',
+                color: 'yellow',
+                emoji: '🐦',
+                image: 'images/翠鸟.png',
+                illustration: 'images/ISTP.png'
+            },
+            'ENFP': {
+                bird: '鹊鸲',
+                title: '快乐小鸟',
+                traits: ['翘屁骚鸟', '叫声清脆', '精力旺盛', '走路蹦跳', '快乐小鸟'],
+                description: '鸟界元气快乐修勾，行走的小太阳\n 整天尾巴翘上天，走路蹦蹦跳跳，浑身散发快乐能量\n 叫声清脆又话多，爱唱爱表达，情绪全写在身上\n 性格外向不怕人，爱凑热闹，走到哪热闹到哪\n 精力旺盛停不下来，永远对世界充满好奇\n 外表灵动讨喜，自带感染力，看见就觉得开心',
+                color: 'green',
+                emoji: '🐦',
+                image: 'images/鹊鸲.png',
+                illustration: 'images/ENFP.png'
+            },
+            'ISFP': {
+                bird: '珠颈斑鸠',
+                title: '摆烂艺术家',
+                traits: ['佛系', '窝随便搭(抽象艺术)', '脾气好', '飞行笨拙'],
+                description: '佛系松弛感天花板：不卷筑巢、不卷育儿，主打一个随遇而安的生活美学，也是最像艺术家的鸟\n 沉稳随性的飞行家：飞行姿态舒展从容，不疾不徐，自带松弛感buff，是鸟界的"慢生活代言人"\n 温柔友善的社交达人：脾气超好、包容性拉满但是又有原则（对谁都好红隼除外），是鸟圈公认的"好好鸟"\n 随性自在的生活家：不被规则束缚，随心生活、自在生长，把"顺其自然"刻进DNA，活成自己喜欢的样子',
+                color: 'yellow',
+                emoji: '🐦',
+                image: 'images/珠颈斑鸠.png',
+                illustration: 'images/ISFP.png'
+            },
+            'ESTP': {
+                bird: '游隼',
+                title: '企业家',
+                traits: ['适应力超强', '不受约束', '行动力超快', '追求刺激'],
+                description: '你是鸟界行动力天花板的游隼，天生自带俯冲buff，说干就干绝不拖泥带水！\n 极度务实不空想，只抓当下最实在的结果，讨厌一切虚头巴脑的套路。\n 临场反应拉满，突发状况面前秒变应急大神，灵活变通从不死板。\n 热爱刺激与挑战，享受捕猎闯关的快感，是闲不住的野生冒险家。\n 社交松弛感拉满，不内耗不矫情，能快速融入任何圈子，随性又飒爽。\n 讨厌被规则死死束缚，偏爱自由闯荡，靠一手快准狠的执行力横扫全场～',
+                color: 'yellow',
+                emoji: '🦅',
+                image: 'images/游隼.png',
+                illustration: 'images/ESTP.png'
+            },
+            'ESFJ': {
+                bird: '八哥',
+                title: '主人公',
+                traits: ['学舌接话', '爱凑热闹', '群居狂魔', '守护群体'],
+                description: '社交狂魔、爱凑热闹，走到哪都有一群"鸟搭子"，是鸟界的气氛粘合剂\n 超强模仿力，会学舌、会接话，能精准get到别人的情绪和需求\n 群居性拉满，重视集体、讲义气，护同伴、护巢超给力\n 热情外向、爱分享，擅长带动氛围，是圈子里的"大家长"',
+                color: 'blue',
+                emoji: '🐦‍⬛',
+                image: 'images/八哥.png',
+                illustration: 'images/ESFJ.png'
+            }
+        };
+
+        // 配色方案
+        const colorSchemes = {
+            purple: {
+                main: '#9b59b6',
+                light: '#e8d5f0'
+            },
+            green: {
+                main: '#27ae60',
+                light: '#d5f5e3'
+            },
+            blue: {
+                main: '#3498db',
+                light: '#d6eaf8'
+            },
+            yellow: {
+                main: '#f39c12',
+                light: '#fdebd0'
+            }
+        };
+
+        // 测试状态
+        let currentQuestion = 0;
+        let answers = {
+            E: 0, I: 0,
+            S: 0, N: 0,
+            T: 0, F: 0,
+            J: 0, P: 0,
+            BONUS_A: 0,
+            BONUS_B: 0
+        };
+        let currentMBTI = '';
+        let answerHistory = []; // 存储答题历史，用于返回上一题
+
+        // 开始测试
+        function startQuiz() {
+            document.getElementById('welcomePage').style.display = 'none';
+            document.getElementById('quizPage').style.display = 'block';
+            currentQuestion = 0;
+            answers = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0, BONUS_A: 0, BONUS_B: 0 };
+            answerHistory = []; // 清空答题历史
+            showQuestion();
+        }
+
+        // 显示当前题目
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            
+            // 更新进度
+            document.getElementById('questionNumber').textContent = `问题 ${currentQuestion + 1}/${questions.length}`;
+            document.getElementById('progressFill').style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            
+            // 更新维度标签
+            const dimensionTag = document.getElementById('dimensionTag');
+            dimensionTag.textContent = question.dimensionName;
+            dimensionTag.className = question.dimension === 'BONUS' ? 'dimension-tag bonus-tag' : 'dimension-tag';
+            
+            // 显示题目
+            document.getElementById('questionText').textContent = question.text;
+            
+            // 生成选项
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.innerHTML = `<span class="option-label">${option.label}.</span> ${option.text}`;
+                button.onclick = () => selectOption(option.value);
+                optionsContainer.appendChild(button);
+            });
+            
+            // 控制返回按钮显示
+            const backBtn = document.getElementById('backBtn');
+            if (currentQuestion > 0) {
+                backBtn.style.display = 'inline-block';
+            } else {
+                backBtn.style.display = 'none';
+            }
+        }
+        
+        // 返回上一题
+        function goBack() {
+            if (currentQuestion > 0 && answerHistory.length > 0) {
+                // 获取上一题的答案记录
+                const lastAnswer = answerHistory.pop();
+                
+                // 减去对应的答案分数
+                if (lastAnswer.dimension === 'BONUS') {
+                    if (lastAnswer.value === 'A') {
+                        answers.BONUS_A--;
+                    } else {
+                        answers.BONUS_B--;
+                    }
+                } else {
+                    answers[lastAnswer.value]--;
+                }
+                
+                // 返回到上一题
+                currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        // 选择选项
+        function selectOption(value) {
+            const question = questions[currentQuestion];
+            
+            // 记录答案到历史记录
+            answerHistory.push({
+                questionIndex: currentQuestion,
+                value: value,
+                dimension: question.dimension
+            });
+            
+            // 记录答案
+            if (question.dimension === 'BONUS') {
+                if (value === 'A') {
+                    answers.BONUS_A++;
+                } else {
+                    answers.BONUS_B++;
+                }
+            } else {
+                answers[value]++;
+            }
+            
+            // 显示选择效果
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            event.target.closest('.option-btn').classList.add('selected');
+            
+            // 延迟进入下一题
+            setTimeout(() => {
+                currentQuestion++;
+                
+                if (currentQuestion < questions.length) {
+                    showQuestion();
+                } else {
+                    calculateAndShowResult();
+                }
+            }, 300);
+        }
+
+        // 计算MBTI类型（考虑权重题）
+        function calculateMBTI() {
+            let type = '';
+            
+            // 基础维度计算
+            let E_Score = answers.E;
+            let I_Score = answers.I;
+            let S_Score = answers.S;
+            let N_Score = answers.N;
+            let T_Score = answers.T;
+            let F_Score = answers.F;
+            let J_Score = answers.J;
+            let P_Score = answers.P;
+            
+            // 权重题修正（当出现3:2或2:2情况时）
+            if (answers.BONUS_A > answers.BONUS_B) {
+                // 倾向E、S、T、J
+                if (E_Score - I_Score <= 1) E_Score += 1;
+                if (S_Score - N_Score <= 1) S_Score += 1;
+                if (T_Score - F_Score <= 1) T_Score += 1;
+                if (J_Score - P_Score <= 1) J_Score += 1;
+            } else if (answers.BONUS_B > answers.BONUS_A) {
+                // 倾向I、N、F、P
+                if (I_Score - E_Score <= 1) I_Score += 1;
+                if (N_Score - S_Score <= 1) N_Score += 1;
+                if (F_Score - T_Score <= 1) F_Score += 1;
+                if (P_Score - J_Score <= 1) P_Score += 1;
+            }
+            
+            // 确定最终类型
+            type += E_Score >= I_Score ? 'E' : 'I';
+            type += S_Score >= N_Score ? 'S' : 'N';
+            type += T_Score >= F_Score ? 'T' : 'F';
+            type += J_Score >= P_Score ? 'J' : 'P';
+            
+            return type;
+        }
+
+        // 计算并显示结果
+        function calculateAndShowResult() {
+            document.getElementById('quizPage').style.display = 'none';
+            document.getElementById('loadingPage').style.display = 'block';
+            
+            // 模拟分析过程
+            setTimeout(() => {
+                document.getElementById('loadingText').textContent = '正在匹配你的鸟类人格...';
+            }, 800);
+            
+            setTimeout(() => {
+                document.getElementById('loadingText').textContent = '正在生成专属鸟类画像...';
+            }, 1600);
+            
+            setTimeout(() => {
+                currentMBTI = calculateMBTI();
+                showResult();
+            }, 2400);
+        }
+
+        // 显示结果
+        function showResult() {
+            document.getElementById('loadingPage').style.display = 'none';
+            document.getElementById('resultPage').style.display = 'block';
+            document.getElementById('resultContent').style.display = 'block';
+            
+            const personality = birdPersonalities[currentMBTI];
+            const colorScheme = colorSchemes[personality.color];
+            
+            // 设置结果配色
+            document.getElementById('resultMBTI').style.color = colorScheme.main;
+            document.getElementById('birdAvatar').style.borderColor = colorScheme.main;
+            
+            // 设置鸟类头像（使用低多边形插画作为头像）
+            const birdAvatar = document.getElementById('birdAvatar');
+            if (personality.illustration) {
+                birdAvatar.innerHTML = `<img src="${personality.illustration}" alt="${personality.bird}插画">`;
+            } else if (personality.image) {
+                birdAvatar.innerHTML = `<img src="${personality.image}" alt="${personality.bird}">`;
+            } else {
+                birdAvatar.textContent = personality.emoji;
+            }
+            
+            // 设置结果信息
+            document.getElementById('resultMBTI').textContent = currentMBTI;
+            document.getElementById('resultBirdName').textContent = `${personality.bird} · ${personality.title}`;
+            
+            // 设置特征标签
+            const traitsContainer = document.getElementById('birdTraits');
+            traitsContainer.innerHTML = '';
+            personality.traits.forEach(trait => {
+                const tag = document.createElement('span');
+                tag.className = 'trait-tag';
+                tag.textContent = trait;
+                tag.style.borderColor = colorScheme.main;
+                tag.style.backgroundColor = colorScheme.light;
+                traitsContainer.appendChild(tag);
+            });
+            
+            // 设置插图（使用真实鸟类照片）
+            const birdIllustration = document.getElementById('birdIllustration');
+            if (personality.image) {
+                birdIllustration.innerHTML = `<div class="bird-illustration-title">真实鸟类形象</div><img src="${personality.image}" alt="${personality.bird}">`;
+                birdIllustration.style.display = 'block';
+            } else {
+                birdIllustration.style.display = 'none';
+            }
+            
+            // 设置描述
+            document.getElementById('resultDescription').innerHTML = personality.description.replace(/\n/g, '<br>');
+            
+            // 计算并显示维度分数
+            updateDimensionBars(colorScheme.main);
+        }
+
+        // 更新维度条
+        function updateDimensionBars(mainColor) {
+            // E/I维度
+            const eiTotal = answers.E + answers.I;
+            const eiPercent = eiTotal > 0 ? Math.round((answers.E / eiTotal) * 100) : 50;
+            document.getElementById('eibar').style.width = `${eiPercent}%`;
+            document.getElementById('eibar').style.background = `linear-gradient(90deg, ${mainColor} 0%, ${mainColor}99 100%)`;
+            document.getElementById('eivalue').textContent = `E${eiPercent}%/I${100-eiPercent}%`;
+            
+            // S/N维度
+            const snTotal = answers.S + answers.N;
+            const snPercent = snTotal > 0 ? Math.round((answers.S / snTotal) * 100) : 50;
+            document.getElementById('snbar').style.width = `${snPercent}%`;
+            document.getElementById('snbar').style.background = `linear-gradient(90deg, ${mainColor} 0%, ${mainColor}99 100%)`;
+            document.getElementById('snvalue').textContent = `S${snPercent}%/N${100-snPercent}%`;
+            
+            // T/F维度
+            const tfTotal = answers.T + answers.F;
+            const tfPercent = tfTotal > 0 ? Math.round((answers.T / tfTotal) * 100) : 50;
+            document.getElementById('tfbar').style.width = `${tfPercent}%`;
+            document.getElementById('tfbar').style.background = `linear-gradient(90deg, ${mainColor} 0%, ${mainColor}99 100%)`;
+            document.getElementById('tfvalue').textContent = `T${tfPercent}%/F${100-tfPercent}%`;
+            
+            // J/P维度
+            const jpTotal = answers.J + answers.P;
+            const jpPercent = jpTotal > 0 ? Math.round((answers.J / jpTotal) * 100) : 50;
+            document.getElementById('jpbar').style.width = `${jpPercent}%`;
+            document.getElementById('jpbar').style.background = `linear-gradient(90deg, ${mainColor} 0%, ${mainColor}99 100%)`;
+            document.getElementById('jpvalue').textContent = `J${jpPercent}%/P${100-jpPercent}%`;
+        }
+
+        // 重新测试
+        function restartQuiz() {
+            document.getElementById('resultPage').style.display = 'none';
+            document.getElementById('welcomePage').style.display = 'block';
+            document.getElementById('resultContent').style.display = 'none';
+        }
+
+        // 分享结果
+        function shareResult() {
+            const personality = birdPersonalities[currentMBTI];
+            const shareText = `我在《测测你的鸟类MBTI》中测出了${personality.bird}型（${currentMBTI}）！\\n\\n${personality.title}\\n${personality.traits.join('、')}\\n\\n你也来测测属于你的鸟类人格吧！`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '测测你的鸟类MBTI',
+                    text: shareText,
+                    url: window.location.href
+                }).then(() => {
+                    closeShareModal();
+                }).catch(err => {
+                    console.log('分享失败，使用复制功能', err);
+                    fallbackCopyText(shareText);
+                });
+            } else {
+                fallbackCopyText(shareText);
+            }
+        }
+        
+        // 备用复制文本功能
+        function fallbackCopyText(shareText) {
+            navigator.clipboard.writeText(shareText).then(() => {
+                alert('测试结果已复制到剪贴板，快去分享给朋友吧！');
+                closeShareModal();
+            }).catch(err => {
+                // 如果剪贴板API失败，使用传统方法
+                const textarea = document.createElement('textarea');
+                textarea.value = shareText;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    alert('测试结果已复制到剪贴板，快去分享给朋友吧！');
+                    closeShareModal();
+                } catch (err) {
+                    alert('复制失败，请手动截图分享');
+                }
+                document.body.removeChild(textarea);
+            });
+        }
+        
+        // 打开分享弹窗
+        function showShareModal() {
+            const shareModal = document.getElementById('shareModal');
+            const sharePreview = document.getElementById('sharePreview');
+            
+            // 清空之前的分享预览
+            sharePreview.innerHTML = '';
+            
+            // 生成分享卡片HTML
+            generateShareCard();
+            
+            // 显示弹窗
+            shareModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // 关闭分享弹窗
+        function closeShareModal() {
+            const shareModal = document.getElementById('shareModal');
+            shareModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // 生成分享卡片
+        function generateShareCard() {
+            const personality = birdPersonalities[currentMBTI];
+            
+            // 计算维度分数
+            const eiTotal = answers.E + answers.I;
+            const eiPercent = eiTotal > 0 ? Math.round((answers.E / eiTotal) * 100) : 50;
+            const snTotal = answers.S + answers.N;
+            const snPercent = snTotal > 0 ? Math.round((answers.S / snTotal) * 100) : 50;
+            const tfTotal = answers.T + answers.F;
+            const tfPercent = tfTotal > 0 ? Math.round((answers.T / tfTotal) * 100) : 50;
+            const jpTotal = answers.J + answers.P;
+            const jpPercent = jpTotal > 0 ? Math.round((answers.J / jpTotal) * 100) : 50;
+            
+            // 构建分享卡片HTML
+            let cardHtml = `
+                <div class="share-card" id="shareCard">
+                    <div class="share-card-header">
+                        <div class="share-title">测测你的鸟类MBTI</div>
+                        <div class="share-subtitle">25道精准题目，属于你的专属鸟类画像</div>
+                    </div>
+                    <div class="share-card-body">
+                        <div class="share-bird-avatar">
+                            ${personality.illustration ? `<img src="${personality.illustration}" alt="${personality.bird}插画">` : (personality.image ? `<img src="${personality.image}" alt="${personality.bird}">` : personality.emoji)}
+                        </div>
+                        <div class="share-mbti">${currentMBTI}</div>
+                        <div class="share-bird-name">${personality.bird} · ${personality.title}</div>
+                        <div class="share-traits">
+                            ${personality.traits.map(trait => `<span class="share-trait-tag">${trait}</span>`).join('')}
+                        </div>
+                        <div class="share-description">
+                            <h4>鸟格描述</h4>
+                            <p>${personality.description.replace(/\\n/g, '<br>')}</p>
+                        </div>
+                        ${personality.image ? `
+                        <div class="share-illustration">
+                            <div class="share-illustration-title">真实鸟类形象</div>
+                            <img src="${personality.image}" alt="${personality.bird}">
+                        </div>
+                        ` : ""}
+                        <div class="share-dimensions">
+                            <div class="share-dimension-row">
+                                <span class="share-dimension-label">E/I</span>
+                                <div class="share-dimension-bar">
+                                    <div class="share-dimension-fill" style="width: ${eiPercent}%;"></div>
+                                </div>
+                                <span class="share-dimension-value">E${eiPercent}%</span>
+                            </div>
+                            <div class="share-dimension-row">
+                                <span class="share-dimension-label">S/N</span>
+                                <div class="share-dimension-bar">
+                                    <div class="share-dimension-fill" style="width: ${snPercent}%;"></div>
+                                </div>
+                                <span class="share-dimension-value">S${snPercent}%</span>
+                            </div>
+                            <div class="share-dimension-row">
+                                <span class="share-dimension-label">T/F</span>
+                                <div class="share-dimension-bar">
+                                    <div class="share-dimension-fill" style="width: ${tfPercent}%;"></div>
+                                </div>
+                                <span class="share-dimension-value">T${tfPercent}%</span>
+                            </div>
+                            <div class="share-dimension-row">
+                                <span class="share-dimension-label">J/P</span>
+                                <div class="share-dimension-bar">
+                                    <div class="share-dimension-fill" style="width: ${jpPercent}%;"></div>
+                                </div>
+                                <span class="share-dimension-value">J${jpPercent}%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="share-card-footer">
+                        <div class="share-footer-text">测测你的鸟类MBTI</div>
+                        <div class="share-creator">创作者：鱼机智yjy</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('sharePreview').innerHTML = cardHtml;
+        }
+        
+        // 图片加载器 - 处理跨域图片
+        function loadImageWithCORS(url) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                
+                img.onload = () => resolve(img);
+                img.onerror = () => {
+                    // 如果CORS失败，尝试使用fetch转base64
+                    fetch(url)
+                        .then(response => response.blob())
+                        .then(blob => {
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                                const base64Img = new Image();
+                                base64Img.onload = () => resolve(base64Img);
+                                base64Img.onerror = reject;
+                                base64Img.src = reader.result;
+                            };
+                            reader.onerror = reject;
+                            reader.readAsDataURL(blob);
+                        })
+                        .catch(() => reject(img));
+                };
+                
+                img.src = url;
+            });
+        }
+
+        // 生成分享图片（优化版）
+        async function generateShareImage() {
+            const shareCard = document.getElementById('shareCard');
+            const generateBtn = document.querySelector('.share-actions .btn-primary');
+            
+            if (!shareCard) {
+                alert('请先生成分享卡片');
+                return;
+            }
+            
+            // 显示加载状态
+            generateBtn.textContent = '生成中...';
+            generateBtn.disabled = true;
+            
+            try {
+                // 预加载所有图片
+                const images = shareCard.querySelectorAll('img');
+                const imagePromises = Array.from(images).map(img => {
+                    return loadImageWithCORS(img.src);
+                });
+                
+                await Promise.all(imagePromises);
+                
+                // 使用html2canvas生成图片
+                const canvas = await html2canvas(shareCard, {
+                    scale: 2, // 提高清晰度
+                    useCORS: true, // 支持跨域图片
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    allowTaint: true,
+                    proxy: false // 不使用代理，直接处理
+                });
+                
+                // 获取图片数据
+                const imageData = canvas.toDataURL('image/png');
+                const personality = birdPersonalities[currentMBTI];
+                const fileName = `鸟类MBTI_${currentMBTI}_${personality.bird}.png`;
+                
+                // 移动端友好的下载方式
+                if (isMobile()) {
+                    // 移动端：显示图片供长按保存
+                    showImageForMobileDownload(imageData, fileName);
+                } else {
+                    // 桌面端：直接下载
+                    downloadImage(imageData, fileName);
+                }
+                
+                // 恢复按钮状态
+                generateBtn.textContent = '保存图片';
+                generateBtn.disabled = false;
+                
+            } catch (error) {
+                console.error('生成图片失败:', error);
+                
+                // 尝试备用方案：重新生成不带图片的版本
+                try {
+                    const backupCanvas = await html2canvas(shareCard, {
+                        scale: 2,
+                        backgroundColor: '#ffffff',
+                        logging: false,
+                        allowTaint: false // 不允许跨域，使用纯文本
+                    });
+                    
+                    const imageData = backupCanvas.toDataURL('image/png');
+                    const personality = birdPersonalities[currentMBTI];
+                    const fileName = `鸟类MBTI_${currentMBTI}_${personality.bird}.png`;
+                    
+                    if (isMobile()) {
+                        showImageForMobileDownload(imageData, fileName);
+                    } else {
+                        downloadImage(imageData, fileName);
+                    }
+                    
+                    alert('图片已生成（部分图片可能无法显示，建议使用截图功能）');
+                } catch (backupError) {
+                    console.error('备用方案也失败:', backupError);
+                    alert('生成图片失败，建议手动截图保存');
+                }
+                
+                generateBtn.textContent = '生成长图';
+                generateBtn.disabled = false;
+            }
+        }
+        
+        // 检测是否为移动端
+        function isMobile() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+        
+        // 桌面端下载图片
+        function downloadImage(dataUrl, fileName) {
+            const link = document.createElement('a');
+            link.download = fileName;
+            link.href = dataUrl;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            alert('图片已生成并保存！');
+        }
+        
+        // 移动端显示图片供长按保存
+        function showImageForMobileDownload(dataUrl, fileName) {
+            // 创建全屏图片展示层
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.9);
+                z-index: 10000;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                box-sizing: border-box;
+            `;
+            
+            // 创建提示文字
+            const tip = document.createElement('div');
+            tip.style.cssText = `
+                color: white;
+                font-size: 16px;
+                margin-bottom: 20px;
+                text-align: center;
+                line-height: 1.5;
+            `;
+            tip.innerHTML = '✅ 图片已生成<br>👆 <strong>长按图片保存</strong> 👇';
+            
+            // 创建图片
+            const img = document.createElement('img');
+            img.src = dataUrl;
+            img.style.cssText = `
+                max-width: 90%;
+                max-height: 80vh;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+                touch-action: none;
+            `;
+            
+            // 创建关闭按钮
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '关闭';
+            closeBtn.style.cssText = `
+                margin-top: 20px;
+                padding: 12px 30px;
+                font-size: 16px;
+                background: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 25px;
+                cursor: pointer;
+            `;
+            
+            closeBtn.onclick = () => {
+                document.body.removeChild(overlay);
+            };
+            
+            overlay.appendChild(tip);
+            overlay.appendChild(img);
+            overlay.appendChild(closeBtn);
+            document.body.appendChild(overlay);
+            
+            // 阻止滚动
+            document.body.style.overflow = 'hidden';
+            
+            // 恢复滚动
+            const restoreScroll = () => {
+                if (document.body.contains(overlay)) {
+                    document.body.removeChild(overlay);
+                }
+                document.body.style.overflow = '';
+            };
+            
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    restoreScroll();
+                }
+            });
+            
+            setTimeout(restoreScroll, 30000); // 30秒后自动关闭
+        }
+    </script>
+</body>
+</html>
